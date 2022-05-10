@@ -23,10 +23,8 @@
                         {% endif %}
                       </li>
                     </ul>
-                    <form class="d-flex">
-                      <input class="form-control me-2" type="search" placeholder="type some keywords..." aria-label="Search">
-                      <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+                    {% block searchBox %}
+		                {% endblock searchBox %}
                   </div>
             </div>
         </nav>
@@ -35,7 +33,6 @@
                 <h1>Rahul's Blogs</h1>
             </div>
         </header>
-        <a class="btn btn-primary" href="{% url 'search_post' %}">Search a Post</a>
         <br>
         <div class="container-fluid">
             {% block content %}

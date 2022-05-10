@@ -15,4 +15,13 @@
 		</div>
 		<br>
 		{% endfor %}
-	{% endblock %}
+			{% if posts.count == 0 %}
+				<h2>0 posts found</h2>
+			{% endif %}
+		{% endblock %}
+	{% block searchBox %}
+	<form method="POST" class="d-flex">{% csrf_token %}
+			{{ form }}
+    	<button class="btn btn-outline-success" type="submit">Search</button>
+	</form>
+	{% endblock searchBox %}
