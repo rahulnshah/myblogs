@@ -10,4 +10,4 @@ class PostForm(forms.ModelForm):
 
 # this will be my search box 
 class NameForm(forms.Form):
-    your_name = forms.CharField(widget=forms.TextInput(attrs={'class' : 'form-control me-2', 'type' : 'search', 'placeholder': 'type somthing...', 'aria-label' : 'Search'}))
+    your_name = forms.CharField(label="", widget=forms.TextInput(attrs={'class' : 'form-control me-2', 'type' : 'search', 'placeholder': 'type something...', 'aria-label' : 'Search'}))
