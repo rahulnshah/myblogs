@@ -7,13 +7,12 @@
     padding: 100px;
     background-size: cover;
     background-repeat: no-repeat;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    
-    transition: all .5s;
+    -webkit-transition: all 1s;
+    -moz-transition: all 1s;
+    transition: all 1s;
 }
 .bg-five {
-	background-image: linear-gradient(yellow, red); 
+	background-image: url("../images/blurredfall.png");
 }
 
 #Main-Header .child:hover,
@@ -23,4 +22,5 @@
     -webkit-transform: scale(1.05);
     -o-transform: scale(1.05);
     transform: scale(1.05);
+    background-image: linear-gradient(yellow, red); 
 }
