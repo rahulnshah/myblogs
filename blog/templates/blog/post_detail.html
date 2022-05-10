@@ -11,6 +11,9 @@
         </aside>
 		<h2><a href="/">{{ post.title }}<a></h2>
 		<time>{{ post.published_date }}</time>
-		<p>{{ post.text|linebreaksbr }}</p>
+		<p>{{ post.text | linebreaks }}</p>
+		{% if post.codeText|length > 0 %}
+			<code>{{ post.codeText | linebreaks}}</article></code>
+		{% endif %}
 	</article>
 {% endblock %}
