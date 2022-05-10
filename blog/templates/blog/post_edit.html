@@ -3,6 +3,6 @@
 {% block content %}
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Publish</button> <!--The <input type="submit"> defines a button for submitting the form data to a form-handler.-->
+        <button type="submit" class="btn btn-primary">Publish</button> <!--The <input type="submit"> defines a button for submitting the form data to a form-handler.-->
     </form>
 {% endblock %}

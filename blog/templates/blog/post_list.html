@@ -2,13 +2,24 @@
 
 	{% block content %}
 		{% for post in posts %}
-			<article>
-				<h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
+		<div class="card">
+			<div class="card-body">
+				<h2>{{ post.title }}</h2>
 				<time>{{ post.published_date }}</time>
-				<p>{{ post.text|linebreaksbr }}</p>
-				{% if post.codeText|length > 0 %}
-					<code>{{ post.codeText | linebreaks}}</article></code>
-				{% endif %}
-			</article>
+			</div>
+			<div class="card-footer">
+				<a href="{% url 'post_detail' pk=post.pk %}" class="btn btn-primary">See Post</a>
+			</div>
+		</div>
+		<br>
 		{% endfor %}
-	{% endblock %}
+			{% if posts.count == 0 %}
+				<h2>0 posts found</h2>
+			{% endif %}
+		{% endblock %}
+	{% block searchBox %}
+	<form method="POST" class="d-flex">{% csrf_token %}
+			{{ form }}
+    	<button class="btn btn-outline-success" type="submit">Search</button>
+	</form>
+	{% endblock searchBox %}
