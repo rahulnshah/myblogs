@@ -6,10 +6,8 @@
 			<div class="card-body">
 				<h2>{{ post.title }}</h2>
 				<time>{{ post.published_date }}</time>
-				<p>{{ post.text|linebreaksbr }}</p>
-				{% if post.codeText|length > 0 %}
-					<pre><code>{{ post.codeText | linebreaks}}</code></pre>
-				{% endif %}
+			</div>
+			<div class="card-footer">
 				<a href="{% url 'post_detail' pk=post.pk %}" class="btn btn-primary">See Post</a>
 			</div>
 		</div>

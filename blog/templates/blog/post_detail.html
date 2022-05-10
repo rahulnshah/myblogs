@@ -1,15 +1,17 @@
 {% extends 'blog/base.html' %}
 
 {% block content %}
-		<h2><a>{{ post.title }}<a></h2>
+		<h2>{{ post.title }}
+			{% if user.is_authenticated %}
+				<a class="btn btn-primary" href="{% url 'post_edit' pk=post.pk %}">
+					Edit Post
+				</a>
+			{% endif %}
+		</h2>
 		<time>{{ post.published_date }}</time>
 		<p>{{ post.text | linebreaks }}</p>
 		{% if post.codeText|length > 0 %}
 			<pre><code>{{ post.codeText | linebreaks}}</code></pre>
 		{% endif %}
-		{% if user.is_authenticated %}
-            <a class="btn btn-primary" href="{% url 'post_edit' pk=post.pk %}">
-                Edit Post
-            </a>
-		{% endif %}
+		
 {% endblock %}
