@@ -2,13 +2,17 @@
 
 	{% block content %}
 		{% for post in posts %}
-			<article>
-				<h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
+		<div class="card">
+			<div class="card-body">
+				<h2>{{ post.title }}</h2>
 				<time>{{ post.published_date }}</time>
 				<p>{{ post.text|linebreaksbr }}</p>
 				{% if post.codeText|length > 0 %}
-					<code>{{ post.codeText | linebreaks}}</article></code>
+					<pre><code>{{ post.codeText | linebreaks}}</code></pre>
 				{% endif %}
-			</article>
+				<a href="{% url 'post_detail' pk=post.pk %}" class="btn btn-primary">See Post</a>
+			</div>
+		</div>
+		<br>
 		{% endfor %}
 	{% endblock %}
