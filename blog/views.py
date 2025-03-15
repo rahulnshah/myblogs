@@ -3,6 +3,7 @@ from .models import Post
 from django.utils import timezone 
 from .forms import PostForm, NameForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
  # Both views.py and models.py are in the same directory. This means we can use . 
 # and the name of the file (without .py). 
 # Then we import the name of the model (Post).
@@ -75,3 +76,11 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('post_list')  # Redirect to the post list page after logout
+
+@login_required
+def post_delete(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('post_list')
+    return render(request, 'blog/post_delete.html', {'post': post})
