@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post 
 from django.utils import timezone 
-from .forms import PostForm
-from .forms import NameForm
+from .forms import PostForm, NameForm, LoginForm
+from django.contrib.auth import authenticate, login, logout
  # Both views.py and models.py are in the same directory. This means we can use . 
 # and the name of the file (without .py). 
 # Then we import the name of the model (Post).
@@ -55,3 +55,23 @@ def post_edit(request, pk):
         form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
     
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('post_list')
+            else:
+                # Add error message for invalid credentials
+                form.add_error(None, "Invalid username or password")
+    else:
+        form = LoginForm()
+    return render(request, 'blog/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('post_list')  # Redirect to the post list page after logout
