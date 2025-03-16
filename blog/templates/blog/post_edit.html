@@ -1,8 +1,114 @@
 {% extends 'blog/base.html' %}
 
 {% block content %}
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Publish</button> <!--The <input type="submit"> defines a button for submitting the form data to a form-handler.-->
-    </form>
+<div class="card">
+    <div class="card-body">
+        <form method="POST" class="post-form" id="post-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            
+            <div id="code-snippets">
+                {% for snippet in post.snippets.all %}
+                    <div class="code-snippet-form mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>Code Snippet</h5>
+                                <input type="hidden" name="snippet_id[]" value="{{ snippet.id }}">
+                                <div class="form-group">
+                                    <label>Description:</label>
+                                    <input type="text" name="snippet_description[]" class="form-control" value="{{ snippet.description }}">
+                                </div>
+                                <div class="form-group mt-2">
+                                    <label>Programming Language:</label>
+                                    <select name="snippet_language[]" class="form-control">
+                                        {% for lang_value, lang_name in snippet.LANGUAGE_CHOICES %}
+                                            <option value="{{ lang_value }}" {% if snippet.language == lang_value %}selected{% endif %}>
+                                                {{ lang_name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group mt-2">
+                                    <label>Code:</label>
+                                    <textarea name="snippet_code[]" class="form-control" rows="5">{{ snippet.code }}</textarea>
+                                </div>
+                                <button type="button" class="btn btn-danger mt-2 remove-snippet">Remove Snippet</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="button" class="btn btn-secondary" id="add-snippet">
+                <i class="fas fa-plus"></i> Add Code Snippet
+            </button>
+            
+            <button type="submit" class="btn btn-primary">Publish</button>
+        </form>
+    </div>
+</div>
+
+<template id="snippet-template">
+    <div class="code-snippet-form mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>Code Snippet</h5>
+                <input type="hidden" name="snippet_id[]" value="">
+                <div class="form-group">
+                    <label>Description:</label>
+                    <input type="text" name="snippet_description[]" class="form-control">
+                </div>
+                <div class="form-group mt-2">
+                    <label>Programming Language:</label>
+                    <select name="snippet_language[]" class="form-control">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="csharp">C#</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="php">PHP</option>
+                        <option value="swift">Swift</option>
+                        <option value="go">Go</option>
+                        <option value="rust">Rust</option>
+                        <option value="sql">SQL</option>
+                    </select>
+                </div>
+                <div class="form-group mt-2">
+                    <label>Code:</label>
+                    <textarea name="snippet_code[]" class="form-control" rows="5"></textarea>
+                </div>
+                <button type="button" class="btn btn-danger mt-2 remove-snippet">Remove Snippet</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addButton = document.getElementById('add-snippet');
+    const snippetsContainer = document.getElementById('code-snippets');
+    const template = document.getElementById('snippet-template');
+
+    // Add click handler for existing remove buttons
+    document.querySelectorAll('.remove-snippet').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('.code-snippet-form').remove();
+        });
+    });
+
+    addButton.addEventListener('click', function() {
+        const clone = template.content.cloneNode(true);
+        snippetsContainer.appendChild(clone);
+
+        // Add remove functionality to the new snippet
+        const newSnippet = snippetsContainer.lastElementChild;
+        newSnippet.querySelector('.remove-snippet').addEventListener('click', function() {
+            newSnippet.remove();
+        });
+    });
+});
+</script>
 {% endblock %}

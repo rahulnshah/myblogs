@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post 
+from .models import Post, CodeSnippet
 from django.utils import timezone 
 from .forms import PostForm, NameForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
@@ -27,34 +27,82 @@ def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk) # The following example gets the object with the primary key pk from Post
     return render(request, 'blog/post_detail.html', {'post': post})
     
-def post_new(request): 
-    if request.method == "POST": # if any field is filled, this will become true 
+@login_required
+def post_new(request):
+    if request.method == "POST":
         form = PostForm(request.POST)
-        if form.is_valid(): # else Django will tell me what to correct 
+        if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
             post.save()
+
+            # Handle code snippets
+            descriptions = request.POST.getlist('snippet_description[]')
+            languages = request.POST.getlist('snippet_language[]')
+            codes = request.POST.getlist('snippet_code[]')
+            
+            for description, language, code in zip(descriptions, languages, codes):
+                if code.strip():  # Only create snippet if code is not empty
+                    CodeSnippet.objects.create(
+                        post=post,
+                        description=description,
+                        language=language,
+                        code=code
+                    )
+            
             return redirect('post_detail', pk=post.pk)
     else: # if a GET (or any other method) we'll create a blank form; This is what we can expect to happen the first time we visit the URL.
         form = PostForm()
     return render(request, 'blog/post_edit.html', {'form': form})
 
+@login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
-         # Create a form to edit an existing Article, but use
-            # POST data to populate the form.
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
             post.save()
+
+            # Handle code snippets
+            descriptions = request.POST.getlist('snippet_description[]')
+            languages = request.POST.getlist('snippet_language[]')
+            codes = request.POST.getlist('snippet_code[]')
+            snippet_ids = request.POST.getlist('snippet_id[]')  # For existing snippets
+
+            # Delete removed snippets
+            existing_ids = [int(id) for id in snippet_ids if id]
+            post.snippets.exclude(id__in=existing_ids).delete()
+
+            # Update or create snippets
+            for i in range(len(descriptions)):  # Use descriptions length since all snippets have description
+                description = descriptions[i]
+                language = languages[i]
+                code = codes[i]
+                
+                if i < len(snippet_ids) and snippet_ids[i]:  # Check if we have a valid ID
+                    # Update existing snippet
+                    snippet = CodeSnippet.objects.get(id=snippet_ids[i])
+                    snippet.description = description
+                    snippet.language = language
+                    snippet.code = code
+                    snippet.save()
+                else:
+                    # Create new snippet
+                    CodeSnippet.objects.create(
+                        post=post,
+                        description=description,
+                        language=language,
+                        code=code
+                    )
+
             return redirect('post_detail', pk=post.pk)
     else:
         form = PostForm(instance=post)
-    return render(request, 'blog/post_edit.html', {'form': form})
+    return render(request, 'blog/post_edit.html', {'form': form, 'post': post})
     
 def login_view(request):
     if request.method == 'POST':

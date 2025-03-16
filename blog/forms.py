@@ -1,12 +1,10 @@
 from django import forms
-
-from .models import Post
+from .models import Post, CodeSnippet
 
 class PostForm(forms.ModelForm):
-
-    class Meta:  # helper class 
+    class Meta:
         model = Post
-        fields = ['title', 'text', 'codeText'] #  once again we will create a link to the forms page, a URL, a view and a template
+        fields = ['title', 'text']
 
 # this will be my search box 
 class NameForm(forms.Form):
